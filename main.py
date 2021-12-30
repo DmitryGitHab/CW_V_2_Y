@@ -2,6 +2,7 @@ from pprint import pprint
 import requests
 import yadisk
 
+
 def get_token():
     list_token = []
     with open('token.txt') as file:
@@ -28,8 +29,7 @@ def get_response():
 print('_______________________________________________________________________________')
 
 
-
-class vk_photo:
+class Vk_Photo:
 
     def __init__(self, name, id):
         self.name = name
@@ -39,11 +39,10 @@ class vk_photo:
         self.file_name = str(vk_response.json()['response']['items'][id]['likes']['count']) + '.txt'
 
 
-
 def create_photo_list(numbers):
     for n in range(numbers):
         photo_name = 'photo_'+str(n)
-        globals()[photo_name] = vk_photo(name=photo_name, id=int(n))
+        globals()[photo_name] = Vk_Photo(name=photo_name, id=int(n))
 
 
 def teeeeeeeest():
@@ -57,7 +56,7 @@ def teeeeeeeest():
 class YaUploader:
 
     def __init__(self, token):
-        self.token = yatoken
+        self.token = token
         self.url = 'https://cloud-api.yandex.net/v1/disk/'
 
     def get_headers(self):
@@ -75,25 +74,6 @@ class YaUploader:
             print("Success")
         pprint(response.json())
         return response.json()
-
-    # def _get_upload_link(self, disk_file_path, from_url):
-    #     upload_url = "https://cloud-api.yandex.net/v1/disk/resources/upload"
-    #     headers = self.get_headers()
-    #     params = {"path": disk_file_path, "url": from_url, "overwrite": "true"}
-    #     response = requests.post(upload_url, headers=headers, params=params)
-    #     return response.json()
-    #
-    # def upload_file_to_disk(self, disk_file_path, from_url):
-    #     href = self._get_upload_link(disk_file_path=disk_file_path, from_url=from_url).get("href", "")
-    #     response = requests.post(href)
-    #     response.raise_for_status()
-    #     if response.status_code == 201:
-    #         print("Success")
-
-
-
-
-
 
 
 if __name__ == '__main__':
@@ -113,7 +93,3 @@ if __name__ == '__main__':
     # ya.upload_file_to_disk(photo_0.name, photo_0.url)
     # ya.upload_file_to_disk(photo_1.name, photo_1.url)
     # ya.upload_file_to_disk(photo_2.name, photo_2.url)
-
-
-
-
