@@ -88,7 +88,6 @@ if __name__ == '__main__':
     ya = YaUploader(token=yatoken)
 
     ya.upload_file_from_url('https://avatars.mds.yandex.net/i?id=2a55270ec332b3b94b87cdf0e0bec1ec-5646019-images-thumbs&n=13', 'cat.jpg')
-    # ya.upload_file_to_disk('cat.jpg', 'https://avatars.mds.yandex.net/i?id=2a55270ec332b3b94b87cdf0e0bec1ec-5646019-images-thumbs&n=13')
 
     # ya.upload_file_to_disk(photo_0.name, photo_0.url)
     # ya.upload_file_to_disk(photo_1.name, photo_1.url)
