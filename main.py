@@ -84,11 +84,8 @@ if __name__ == '__main__':
     create_photo_list(5)
     teeeeeeeest()
     # TOKEN = input('Введите ваш токен: ')
-    # aaaa = 'https://avatars.mds.yandex.net/i?id=2a55270ec332b3b94b87cdf0e0bec1ec-5646019-images-thumbs&n=13'
     ya = YaUploader(token=yatoken)
 
-    ya.upload_file_from_url('https://avatars.mds.yandex.net/i?id=2a55270ec332b3b94b87cdf0e0bec1ec-5646019-images-thumbs&n=13', 'cat.jpg')
-
-    # ya.upload_file_to_disk(photo_0.name, photo_0.url)
-    # ya.upload_file_to_disk(photo_1.name, photo_1.url)
-    # ya.upload_file_to_disk(photo_2.name, photo_2.url)
+    ya.upload_file_from_url(photo_0.url, photo_0.file_name)
+    ya.upload_file_from_url(photo_1.url, photo_1.file_name)
+    ya.upload_file_from_url(photo_2.url, photo_2.file_name)
