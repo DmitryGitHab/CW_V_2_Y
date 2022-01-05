@@ -2,7 +2,7 @@ from pprint import pprint
 import requests
 from tqdm import tqdm
 from tqdm import tqdm_gui
-import matplotlib
+
 
 
 def get_token():
