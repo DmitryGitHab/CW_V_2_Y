@@ -1,9 +1,8 @@
 from pprint import pprint
 import requests
 from tqdm import tqdm
-# from alive_progress import alive_bar
-import time
-import yadisk
+from tqdm import tqdm_gui
+import matplotlib
 
 
 def get_token():
@@ -30,10 +29,7 @@ def get_response():
     return response
 
 
-print('_______________________________________________________________________________')
-
-
-class Vk_Photo:
+class VkPhoto:
 
     def __init__(self, name, id):
         self.name = name
@@ -47,7 +43,7 @@ def create_photo_list(numbers):
     photo_list = []
     for n in range(numbers):
         photo_name = 'photo_'+str(n)
-        globals()[photo_name] = Vk_Photo(name=photo_name, id=int(n))
+        globals()[photo_name] = VkPhoto(name=photo_name, id=int(n))
         photo_list.append(photo_name)
     return photo_list
 
@@ -55,7 +51,9 @@ def create_photo_list(numbers):
 def upload_all_photo(list_photo):
     ya = YaUploader(token=yatoken)
     for i in tqdm(list_photo):
+    # for i in tqdm_gui(list_photo):    # вариант прогресс бара
         ya.upload_file_from_url(eval(i).url, eval(i).file_name)
+    print("Success")
 
 
 class YaUploader:
@@ -82,13 +80,12 @@ class YaUploader:
 
 
 if __name__ == '__main__':
-
+    # photo_count = int(input('введите количтество фото'))
+    photo_count = 5
     yatoken = get_token()[0].split()[-1]
     vktoken = get_token()[1].split()[-1]
     vk_response = get_response()
     # TOKEN = input('Введите ваш токен: ')
     ya = YaUploader(token=yatoken)
-    # photo_list = create_photo_list(int(input('введите количтество фото')))
-    photo_list = create_photo_list(5)
+    photo_list = create_photo_list(photo_count)
     upload_all_photo(photo_list)
-
