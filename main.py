@@ -1,5 +1,8 @@
 from pprint import pprint
 import requests
+from tqdm import tqdm
+# from alive_progress import alive_bar
+import time
 import yadisk
 
 
@@ -14,7 +17,8 @@ def get_token():
 def get_response():
     url = 'https://api.vk.com/method/photos.get'
     params = {
-        'owner_id': 1,
+        # 'owner_id': 1,
+        'owner_id': 552934290,
         'album_id': 'profile',
         'extended': 1,
         'rev': 0,
@@ -40,17 +44,18 @@ class Vk_Photo:
 
 
 def create_photo_list(numbers):
+    photo_list = []
     for n in range(numbers):
         photo_name = 'photo_'+str(n)
         globals()[photo_name] = Vk_Photo(name=photo_name, id=int(n))
+        photo_list.append(photo_name)
+    return photo_list
 
 
-def teeeeeeeest():
-    print(photo_0.name, photo_0.size, photo_0.file_name, photo_0.url)
-    print(photo_1.name, photo_1.size, photo_1.file_name, photo_1.url)
-    print(photo_2.name, photo_2.size, photo_2.file_name, photo_2.url)
-    print(photo_3.name, photo_3.size, photo_3.file_name, photo_3.url)
-    print(photo_4.name, photo_4.size, photo_4.file_name, photo_4.url)
+def upload_all_photo(list_photo):
+    ya = YaUploader(token=yatoken)
+    for i in tqdm(list_photo):
+        ya.upload_file_from_url(eval(i).url, eval(i).file_name)
 
 
 class YaUploader:
@@ -70,9 +75,9 @@ class YaUploader:
         params = {'path': path_to, 'url': from_url}
         response = requests.post(self.url+'resources/upload', headers=self.get_headers(), params=params)
         response.raise_for_status()
-        if response.status_code == 200 or 201 or 202:
-            print("Success")
-        pprint(response.json())
+        # if response.status_code == 200 or 201 or 202:
+        #     print("Success")
+        # pprint(response.json())
         return response.json()
 
 
@@ -81,11 +86,9 @@ if __name__ == '__main__':
     yatoken = get_token()[0].split()[-1]
     vktoken = get_token()[1].split()[-1]
     vk_response = get_response()
-    create_photo_list(5)
-    teeeeeeeest()
     # TOKEN = input('Введите ваш токен: ')
     ya = YaUploader(token=yatoken)
+    # photo_list = create_photo_list(int(input('введите количтество фото')))
+    photo_list = create_photo_list(5)
+    upload_all_photo(photo_list)
 
-    ya.upload_file_from_url(photo_0.url, photo_0.file_name)
-    ya.upload_file_from_url(photo_1.url, photo_1.file_name)
-    ya.upload_file_from_url(photo_2.url, photo_2.file_name)
