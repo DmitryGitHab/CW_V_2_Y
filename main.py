@@ -54,7 +54,7 @@ def upload_all_photo(list_photo, id):
     # for i in tqdm_gui(list_photo):   # вариант прогресс бара
         ya.upload_file_from_url(eval(i).url, eval(i).file_name, id)
     with open('text.json', 'w') as file:
-        json.dump(data, file, indent=4)
+        json.dump(data, file, indent=0)
     print("Задача успешно завершена!")
 
 
