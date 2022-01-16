@@ -3,6 +3,9 @@ import requests
 from tqdm import tqdm
 from tqdm import tqdm_gui
 
+""" TODO:
+ readme
+"""
 
 def get_token():
     list_token = []
@@ -10,6 +13,22 @@ def get_token():
         for line in file:
             list_token.append(line.strip())
     return list_token
+
+
+def get_id_by_short_name(name_id):
+    persone_id = name_id
+    url = "https://api.vk.com/method/utils.resolveScreenName"
+    params = {
+        "access_token": vktoken,
+        "v": "5.131",
+        "screen_name": name_id
+        }
+    responce = requests.get(url, params=params)
+    if name_id.isdigit():
+        return persone_id
+    else:
+        persone_id = responce.json()['response']['object_id']
+        return responce.json()['response']['object_id']
 
 
 def get_response(id):
@@ -46,18 +65,6 @@ def create_photo_list(numbers):
     return photo_list
 
 
-def upload_all_photo(list_photo, id):
-    ya = YaUploader(token=yatoken)
-    data = []
-    for i in tqdm(list_photo):
-        data.append({"file_name": eval(i).file_name, "size": eval(i).size})
-    # for i in tqdm_gui(list_photo):   # вариант прогресс бара
-        ya.upload_file_from_url(eval(i).url, eval(i).file_name, id)
-    with open('text.json', 'w') as file:
-        json.dump(data, file, indent=0)
-    print("Задача успешно завершена!")
-
-
 class YaUploader:
 
     def __init__(self, token):
@@ -88,17 +95,29 @@ class YaUploader:
         # pprint(response.json())
         # return response.json()
 
+    def upload_all_photo(self, list_photo, id):
+        data = []
+        for i in tqdm(list_photo):
+            data.append({"file_name": eval(i).file_name, "size": eval(i).size})
+        # for i in tqdm_gui(list_photo):   # вариант прогресс бара
+            ya.upload_file_from_url(eval(i).url, eval(i).file_name, id)
+        with open('text.json', 'w') as file:
+            json.dump(data, file, indent=0)
+        print("Задача успешно завершена!")
 
 if __name__ == '__main__':
     yatoken = get_token()[0].split()[-1]  # Ya - токен. допускается раскоммитить переменную ниже, для ручного ввода
     vktoken = get_token()[1].split()[-1]
-    persone_id = 1  # id Павла Дурова. допускается раскоммитить переменную ниже, для ручного ввода id персоны
+    # persone_id = 1  # id Павла Дурова. допускается раскоммитить переменную ниже, для ручного ввода id персоны
+    # persone_id = 1  # id Павла Дурова. допускается раскоммитить переменную ниже, для ручного ввода id персоны
+    name_id = 'ant.bogdanov'  # id Павла Дурова. допускается раскоммитить переменную ниже, для ручного ввода id персоны
     photo_count = 5  # количество фото для загрузки. допускается раскоммитить переменную, для ручного ввода кол-ва фото
     # photo_count = int(input('введите количество фото: '))
     # persone_id = int(input('введите id персоны: '))
     # yatoken = input('Введите ваш Yandex - токен: ')
-    vk_response = get_response(persone_id)
+    vk_response = get_response(get_id_by_short_name(name_id))
     ya = YaUploader(token=yatoken)
-    ya.create_folder(persone_id)
+    ya.create_folder(get_id_by_short_name(name_id))
     photo_list = create_photo_list(photo_count)
-    upload_all_photo(photo_list, persone_id)
+    ya.upload_all_photo(photo_list, get_id_by_short_name(name_id))
+    get_id_by_short_name(name_id)
