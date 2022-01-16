@@ -1,5 +1,6 @@
 import json
 import requests
+import datetime
 from tqdm import tqdm
 from tqdm import tqdm_gui
 
@@ -53,7 +54,8 @@ class VkPhoto:
         self.id = id
         self.url = vk_response.json()['response']['items'][id]['sizes'][-1]['url']
         self.size = vk_response.json()['response']['items'][id]['sizes'][-1]['type']
-        self.file_name = str(vk_response.json()['response']['items'][id]['likes']['count']) + '.jpg'
+        self.file_name = str(vk_response.json()['response']['items'][id]['likes']['count'])
+        self.upload_date = vk_response.json()['response']['items'][id]['date']
 
 
 def create_photo_list(numbers):
@@ -62,6 +64,7 @@ def create_photo_list(numbers):
         photo_name = 'photo_'+str(n)
         globals()[photo_name] = VkPhoto(name=photo_name, id=int(n))
         photo_list.append(photo_name)
+
     return photo_list
 
 
@@ -97,20 +100,29 @@ class YaUploader:
 
     def upload_all_photo(self, list_photo, id):
         data = []
+        check_box = []
         for i in tqdm(list_photo):
-            data.append({"file_name": eval(i).file_name, "size": eval(i).size})
-        # for i in tqdm_gui(list_photo):   # вариант прогресс бара
-            ya.upload_file_from_url(eval(i).url, eval(i).file_name, id)
+            if str(eval(i).file_name) in check_box:
+                date = datetime.date.fromtimestamp(eval(i).upload_date).strftime("%Y-%m-%d")
+                data.append({"file_name": eval(i).file_name+'_'+date+'.jpg', "size": eval(i).size})
+                ya.upload_file_from_url(eval(i).url, eval(i).file_name+'_'+date+'.jpg', id)
+                check_box.append(eval(i).file_name)
+            else:
+                data.append({"file_name": eval(i).file_name+'.jpg', "size": eval(i).size})
+                ya.upload_file_from_url(eval(i).url, eval(i).file_name+'.jpg', id)
+                check_box.append(eval(i).file_name)
         with open('text.json', 'w') as file:
             json.dump(data, file, indent=0)
         print("Задача успешно завершена!")
+        print(data)
 
 if __name__ == '__main__':
     yatoken = get_token()[0].split()[-1]  # Ya - токен. допускается раскоммитить переменную ниже, для ручного ввода
     vktoken = get_token()[1].split()[-1]
     # persone_id = 1  # id Павла Дурова. допускается раскоммитить переменную ниже, для ручного ввода id персоны
     # persone_id = 1  # id Павла Дурова. допускается раскоммитить переменную ниже, для ручного ввода id персоны
-    name_id = 'ant.bogdanov'  # id Павла Дурова. допускается раскоммитить переменную ниже, для ручного ввода id персоны
+    # name_id = 'ant.bogdanov'  # id Павла Дурова. допускается раскоммитить переменную ниже, для ручного ввода id персоны
+    name_id = 'begemot_korovin'
     photo_count = 5  # количество фото для загрузки. допускается раскоммитить переменную, для ручного ввода кол-ва фото
     # photo_count = int(input('введите количество фото: '))
     # persone_id = int(input('введите id персоны: '))
@@ -121,3 +133,4 @@ if __name__ == '__main__':
     photo_list = create_photo_list(photo_count)
     ya.upload_all_photo(photo_list, get_id_by_short_name(name_id))
     get_id_by_short_name(name_id)
+
