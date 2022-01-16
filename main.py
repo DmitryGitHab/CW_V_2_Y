@@ -16,7 +16,7 @@ def get_token():
     return list_token
 
 
-def get_id_by_short_name(name_id):
+def get_persone_id(name_id):
     persone_id = name_id
     url = "https://api.vk.com/method/utils.resolveScreenName"
     params = {
@@ -29,7 +29,7 @@ def get_id_by_short_name(name_id):
         return persone_id
     else:
         persone_id = responce.json()['response']['object_id']
-        return responce.json()['response']['object_id']
+        return persone_id
 
 
 def get_response(id):
@@ -114,23 +114,21 @@ class YaUploader:
         with open('text.json', 'w') as file:
             json.dump(data, file, indent=0)
         print("Задача успешно завершена!")
-        print(data)
+
 
 if __name__ == '__main__':
     yatoken = get_token()[0].split()[-1]  # Ya - токен. допускается раскоммитить переменную ниже, для ручного ввода
     vktoken = get_token()[1].split()[-1]
-    # persone_id = 1  # id Павла Дурова. допускается раскоммитить переменную ниже, для ручного ввода id персоны
-    # persone_id = 1  # id Павла Дурова. допускается раскоммитить переменную ниже, для ручного ввода id персоны
-    # name_id = 'ant.bogdanov'  # id Павла Дурова. допускается раскоммитить переменную ниже, для ручного ввода id персоны
-    name_id = 'begemot_korovin'
+    profile_name = 'begemot_korovin'
+    persone_id = get_persone_id(profile_name)
     photo_count = 5  # количество фото для загрузки. допускается раскоммитить переменную, для ручного ввода кол-ва фото
     # photo_count = int(input('введите количество фото: '))
-    # persone_id = int(input('введите id персоны: '))
+    # profile_name = int(input('введите id персоны: '))
     # yatoken = input('Введите ваш Yandex - токен: ')
-    vk_response = get_response(get_id_by_short_name(name_id))
+    vk_response = get_response(persone_id)
     ya = YaUploader(token=yatoken)
-    ya.create_folder(get_id_by_short_name(name_id))
+    ya.create_folder(persone_id)
     photo_list = create_photo_list(photo_count)
-    ya.upload_all_photo(photo_list, get_id_by_short_name(name_id))
-    get_id_by_short_name(name_id)
+    ya.upload_all_photo(photo_list, persone_id)
+
 
