@@ -72,9 +72,6 @@ class VkPhoto:
         return response
 
 
-
-
-
 class YaUploader:
 
     def __init__(self, token):
