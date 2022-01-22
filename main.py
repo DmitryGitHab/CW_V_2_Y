@@ -16,35 +16,19 @@ def get_token():
     return list_token
 
 
-def get_persone_id(name_id):
-    persone_id = name_id
-    url = "https://api.vk.com/method/utils.resolveScreenName"
-    params = {
-        "access_token": vktoken,
-        "v": "5.131",
-        "screen_name": name_id
-        }
-    responce = requests.get(url, params=params)
-    if name_id.isdigit():
-        return persone_id
-    else:
-        persone_id = responce.json()['response']['object_id']
-        return persone_id
+def create_photo_list(numbers, social_network):
+    photo_list = []
+    for n in range(numbers):
+        photo_name = 'photo_'+str(n)
+        globals()[photo_name] = social_network(name=photo_name, id=int(n))
+        photo_list.append(photo_name)
+    return photo_list
 
 
-def get_response(id):
-    url = 'https://api.vk.com/method/photos.get'
-    params = {
-        'owner_id': id,
-        'album_id': 'profile',
-        'extended': 1,
-        'rev': 0,
-        'v': 5.131,
-        'access_token': vktoken
-    }
-    response = requests.get(url, params=params)
-    response.raise_for_status()
-    return response
+def write_json(data):
+    with open('text.json', 'w') as file:
+        json.dump(data, file, indent=0)
+    print("JSON данные записаны в файл")
 
 
 class VkPhoto:
@@ -57,15 +41,38 @@ class VkPhoto:
         self.file_name = str(vk_response.json()['response']['items'][id]['likes']['count'])
         self.upload_date = vk_response.json()['response']['items'][id]['date']
 
+    def get_persone_id(name_id):
+        persone_id = name_id
+        url = "https://api.vk.com/method/utils.resolveScreenName"
+        params = {
+            "access_token": vktoken,
+            "v": "5.131",
+            "screen_name": name_id
+            }
+        responce = requests.get(url, params=params)
+        if name_id.isdigit():
+            return persone_id
+        else:
+            persone_id = responce.json()['response']['object_id']
+            return persone_id
 
-def create_photo_list(numbers):
-    photo_list = []
-    for n in range(numbers):
-        photo_name = 'photo_'+str(n)
-        globals()[photo_name] = VkPhoto(name=photo_name, id=int(n))
-        photo_list.append(photo_name)
 
-    return photo_list
+    def get_response(id):
+        url = 'https://api.vk.com/method/photos.get'
+        params = {
+            'owner_id': id,
+            'album_id': 'profile',
+            'extended': 1,
+            'rev': 0,
+            'v': 5.131,
+            'access_token': vktoken
+        }
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        return response
+
+
+
 
 
 class YaUploader:
@@ -111,24 +118,26 @@ class YaUploader:
                 data.append({"file_name": eval(i).file_name+'.jpg', "size": eval(i).size})
                 ya.upload_file_from_url(eval(i).url, eval(i).file_name+'.jpg', id)
                 check_box.append(eval(i).file_name)
-        with open('text.json', 'w') as file:
-            json.dump(data, file, indent=0)
-        print("Задача успешно завершена!")
+        print("Файлы успешно загружены на Яндекс-Диск!")
+        write_json(data)
+        return data
 
 
 if __name__ == '__main__':
     yatoken = get_token()[0].split()[-1]  # Ya - токен. допускается раскоммитить переменную ниже, для ручного ввода
     vktoken = get_token()[1].split()[-1]
     profile_name = 'begemot_korovin'
-    persone_id = get_persone_id(profile_name)
+    persone_id = VkPhoto.get_persone_id(profile_name)
     photo_count = 5  # количество фото для загрузки. допускается раскоммитить переменную, для ручного ввода кол-ва фото
     # photo_count = int(input('введите количество фото: '))
     # profile_name = int(input('введите id персоны: '))
     # yatoken = input('Введите ваш Yandex - токен: ')
-    vk_response = get_response(persone_id)
+    vk_response = VkPhoto.get_response(persone_id)
     ya = YaUploader(token=yatoken)
     ya.create_folder(persone_id)
-    photo_list = create_photo_list(photo_count)
+    photo_list = create_photo_list(photo_count, VkPhoto)
     ya.upload_all_photo(photo_list, persone_id)
+
+
 
 
