@@ -123,12 +123,12 @@ class YaUploader:
 if __name__ == '__main__':
     yatoken = get_token()[0].split()[-1]  # Ya - токен. допускается раскоммитить переменную ниже, для ручного ввода
     vktoken = get_token()[1].split()[-1]
-    profile_name = 'begemot_korovin'
+    # profile_name = 'begemot_korovin'
+    # photo_count = 5  # количество фото для загрузки. допускается раскоммитить переменную, для ручного ввода кол-ва фото
+    photo_count = int(input('введите количество фото: '))
+    profile_name = int(input('введите id персоны: '))
+    yatoken = input('Введите ваш Yandex - токен: ')
     persone_id = VkPhoto.get_persone_id(profile_name)
-    photo_count = 5  # количество фото для загрузки. допускается раскоммитить переменную, для ручного ввода кол-ва фото
-    # photo_count = int(input('введите количество фото: '))
-    # profile_name = int(input('введите id персоны: '))
-    # yatoken = input('Введите ваш Yandex - токен: ')
     vk_response = VkPhoto.get_response(persone_id)
     ya = YaUploader(token=yatoken)
     ya.create_folder(persone_id)
