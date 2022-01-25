@@ -126,7 +126,7 @@ if __name__ == '__main__':
     # profile_name = 'begemot_korovin'
     # photo_count = 5  # количество фото для загрузки. допускается раскоммитить переменную, для ручного ввода кол-ва фото
     photo_count = int(input('введите количество фото: '))
-    profile_name = int(input('введите id персоны: '))
+    profile_name = input('введите id персоны: ')
     yatoken = input('Введите ваш Yandex - токен: ')
     persone_id = VkPhoto.get_persone_id(profile_name)
     vk_response = VkPhoto.get_response(persone_id)
