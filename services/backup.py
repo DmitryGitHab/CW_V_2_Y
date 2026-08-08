@@ -42,7 +42,7 @@ def backup_profile_photos(
     for photo in tqdm(photos, desc="Загрузка на Яндекс.Диск"):
         file_name = _unique_file_name(photo, used_names)
         yandex.upload_from_url(photo.url, f"{folder}/{file_name}")
-        report.append({"file_name": file_name, "size": photo.size_type})
+        report.append({"file_name": file_name, "size": photo.size_type, "likes": photo.likes})
 
     REPORT_FILE.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     return report

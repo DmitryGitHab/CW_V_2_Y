@@ -2,6 +2,8 @@
 
 import requests
 
+from services.retry import retry
+
 YANDEX_API_URL = "https://cloud-api.yandex.net/v1/disk"
 
 
@@ -31,7 +33,9 @@ class YandexDiskUploader:
         if response.status_code not in (200, 201, 409):
             response.raise_for_status()
 
+    @retry(times=3, base_delay=1.5, exceptions=(requests.exceptions.RequestException,))
     def upload_from_url(self, source_url: str, destination_path: str) -> None:
+        """Загружает файл по URL. При сетевом сбое повторяет попытку до 3 раз."""
         response = requests.post(
             f"{YANDEX_API_URL}/resources/upload",
             headers=self._headers,
